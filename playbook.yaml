@@ -1,6 +1,6 @@
 ---
 - name: Install Jenkins & Gitlab
-  hosts: linux
+  hosts: all
   become: true  
   roles:
     - role-docker
