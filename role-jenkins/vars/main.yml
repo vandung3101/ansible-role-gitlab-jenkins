@@ -1,3 +1,0 @@
----
-# vars file for roles
-    default_container_image: jenkins/jenkins:lts 
