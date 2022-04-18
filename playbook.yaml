@@ -110,6 +110,27 @@
  
     
     - debug:
-        var: pass_jen.stdout_lines
-    - debug:
         var: pass_git.stdout_lines
+
+    - name: Download kubectl binary
+      get_url:
+        url: "https://dl.k8s.io/release/v1.23.5/bin/linux/amd64/kubectl"
+        dest: "/tmp"
+      tags:
+        - kubectl
+
+    - name: Copy kubectl binary to destination directory
+      copy:
+        src: "/tmp/{{ item }}"
+        dest: "/usr/local/bin/{{ item }}"
+        mode: "0755"
+        owner: "root"
+        group: "root"
+        remote_src: true
+      with_items:
+        - kubectl
+    - name: check kubectl 
+      command: kubectl version --client
+      register: kubectl_check
+    - debug:
+        var: kubectl_check
