@@ -46,10 +46,10 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
-        
+
     - name: Download Jenkins repo apt URL for
       apt_key:
-        url: "{{jenkins.repo_URL}}"
+        url: "https://pkg.jenkins.io/debian-stable/jenkins.io.key"
         state: present 
       become: true
 
@@ -64,7 +64,7 @@
 
     - name: Install Java
       apt:
-        name: "{{java}}"
+        name: "openjdk-11-jdk"
         state: present 
 
     - name: Install Jenkins
