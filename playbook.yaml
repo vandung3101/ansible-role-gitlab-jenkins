@@ -99,7 +99,7 @@
         source: pull
 
     - name: command install gitlab
-      command: bash -c "sudo docker run --detach --publish 8081:443 --publish 8082:80 --publish 8083:22 --name gitlab-sv --volume /config-gl/config:/etc/gitlab --volume /logs-gl/logs:/var/log/gitlab --volume /data-gl/data:/var/opt/gitlab gitlab/gitlab-ce:latest"
+      command: bash -c "sudo docker run --detach --hostname gitlab.vandung.me --publish 8081:443 --publish 8082:80 --publish 8083:22 --name gitlab-sv --volume /config-gl/config:/etc/gitlab --volume /logs-gl/logs:/var/log/gitlab --volume /data-gl/data:/var/opt/gitlab gitlab/gitlab-ce:latest"
     
     - name: sleep wait
       command: /bin/sleep 40
