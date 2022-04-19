@@ -74,7 +74,7 @@
 
     - name: Pull default Docker image
       docker_image:
-        name: "{{ default_container_image }}"
+        name: "jenkins/jenkins:lts"
         source: pull
 
     - name: command install jenkins
@@ -136,7 +136,7 @@
         var: pass_git.stdout_lines
     - debug:
         var: pass_jen.stdout_lines
-        
+
     - name: Download kubectl binary
       get_url:
         url: "https://dl.k8s.io/release/v1.23.5/bin/linux/amd64/kubectl"
