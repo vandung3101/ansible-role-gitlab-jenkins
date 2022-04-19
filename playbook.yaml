@@ -89,9 +89,7 @@
         name: jenkins
         enabled: true
         state: started
-
-    # - name: disable csrf protection JAVA_OPTS
-    #   command: "echo 'JAVA_OPTS=\"-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom\"' >> /etc/default/jenkins"
+        
     # - name: create slave folder
     #   file:
     #     path: /home/jenkins
@@ -104,31 +102,31 @@
     - debug:
         var: jenkins_password
         
-    - name: Creates directory gitlab
-      file:
-        path: 
-          - /config-gl
-          - /logs-gl
-          - /data-gl
-        state: directory
+    # - name: Creates directory gitlab
+    #   file:
+    #     path: 
+    #       - /config-gl
+    #       - /logs-gl
+    #       - /data-gl
+    #     state: directory
 
-    - name: Pull image gitlab-ce
-      docker_image:
-        name: gitlab/gitlab-ce:latest
-        source: pull
+    # - name: Pull image gitlab-ce
+    #   docker_image:
+    #     name: gitlab/gitlab-ce:latest
+    #     source: pull
 
-    - name: command install gitlab
-      command: bash -c "sudo docker run --detach --hostname gitlab.vandung.me --publish 8081:443 --publish 8082:80 --publish 8083:22 --name gitlab-sv --volume /config-gl/config:/etc/gitlab --volume /logs-gl/logs:/var/log/gitlab --volume /data-gl/data:/var/opt/gitlab gitlab/gitlab-ce:latest"
+    # - name: command install gitlab
+    #   command: bash -c "sudo docker run --detach --hostname gitlab.vandung.me --publish 8081:443 --publish 8082:80 --publish 8083:22 --name gitlab-sv --volume /config-gl/config:/etc/gitlab --volume /logs-gl/logs:/var/log/gitlab --volume /data-gl/data:/var/opt/gitlab gitlab/gitlab-ce:latest"
     
-    - name: sleep wait
-      command: /bin/sleep 40
+    # - name: sleep wait
+    #   command: /bin/sleep 40
 
-    - name: cat pass gitlab
-      command: bash -c "sudo docker exec -it gitlab-sv grep 'Password:' /etc/gitlab/initial_root_password"
-      register: pass_git
+    # - name: cat pass gitlab
+    #   command: bash -c "sudo docker exec -it gitlab-sv grep 'Password:' /etc/gitlab/initial_root_password"
+    #   register: pass_git
 
-    - debug:
-        var: pass_git.stdout_lines
+    # - debug:
+    #     var: pass_git.stdout_lines
 
     - name: Download kubectl binary
       get_url:
