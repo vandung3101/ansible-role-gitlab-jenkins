@@ -67,28 +67,34 @@
         name: "openjdk-11-jdk"
         state: present 
 
-    - name: Creates directory
-      file:
-        path: ./datajenkins
-        state: directory
+    # - name: Creates directory
+    #   file:
+    #     path: ./datajenkins
+    #     state: directory
 
-    - name: Pull default Docker image
-      docker_image:
-        name: "jenkins/jenkins:lts"
-        source: pull
-    - name: command install jenkins
-      command: bash -c "sudo docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -v `pwd`/datajenkins:/var/jenkins_home -e JAVA_OPTS="hudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true" -p 8080:8080 --user 0:0 --name jenkins-sv -d jenkins/jenkins:lts"
+    # - name: Pull default Docker image
+    #   docker_image:
+    #     name: "jenkins/jenkins:lts"
+    #     source: pull
+    # - name: command install jenkins
+    #   command: bash -c "sudo docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -v `pwd`/datajenkins:/var/jenkins_home -e JAVA_OPTS="hudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true" -p 8080:8080 --user 0:0 --name jenkins-sv -d jenkins/jenkins:lts"
 
-    # - name: Install Jenkins
-    #   apt: 
-    #     name: jenkins
-    #     state: latest
+    - name: Install Jenkins
+      apt: 
+        name: jenkins
+        state: latest
 
-    # - name: Start Jenkins
-    #   service:
-    #     name: jenkins
-    #     enabled: true
-    #     state: started
+    - name: Start Jenkins
+      service:
+        name: jenkins
+        enabled: true
+        state: started
+
+    - name: Stop and remove jenkins-sv container
+      docker_container:
+        name: jenkins-sv
+        state: absent
+        force: yes
 
     # - name: disable csrf protection JAVA_OPTS
     #   command: "echo 'JAVA_OPTS=\"-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom\"' >> /etc/default/jenkins"
@@ -98,11 +104,11 @@
     #     state: directory
     # - name: add permission to slave folder
     #   command: "chmod -R 777 /home/jenkins"
-    # - name: Get jenkins password
-    #   ansible.builtin.command: cat /var/lib/jenkins/secrets/initialAdminPassword
-    #   register: jenkins_password
-    # - debug:
-    #     var: jenkins_password
+    - name: Get jenkins password
+      ansible.builtin.command: cat /var/lib/jenkins/secrets/initialAdminPassword
+      register: jenkins_password
+    - debug:
+        var: jenkins_password
         
     - name: Creates directory gitlab
       file:
@@ -127,14 +133,8 @@
       command: bash -c "sudo docker exec -it gitlab-sv grep 'Password:' /etc/gitlab/initial_root_password"
       register: pass_git
 
-    - name: cat pass jenkins
-      command: bash -c "sudo docker exec jenkins-sv cat /var/jenkins_home/secrets/initialAdminPassword"
-      register: pass_jen
-
     - debug:
         var: pass_git.stdout_lines
-    - debug:
-        var: pass_jen.stdout_lines
 
     - name: Download kubectl binary
       get_url:
