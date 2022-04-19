@@ -90,12 +90,6 @@
         enabled: true
         state: started
 
-    - name: Stop and remove jenkins-sv container
-      docker_container:
-        name: jenkins-sv
-        state: absent
-        force: yes
-
     # - name: disable csrf protection JAVA_OPTS
     #   command: "echo 'JAVA_OPTS=\"-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom\"' >> /etc/default/jenkins"
     # - name: create slave folder
