@@ -67,18 +67,6 @@
         name: "openjdk-11-jdk"
         state: present 
 
-    # - name: Creates directory
-    #   file:
-    #     path: ./datajenkins
-    #     state: directory
-
-    # - name: Pull default Docker image
-    #   docker_image:
-    #     name: "jenkins/jenkins:lts"
-    #     source: pull
-    # - name: command install jenkins
-    #   command: bash -c "sudo docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -v `pwd`/datajenkins:/var/jenkins_home -e JAVA_OPTS="hudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true" -p 8080:8080 --user 0:0 --name jenkins-sv -d jenkins/jenkins:lts"
-
     - name: Install Jenkins
       apt: 
         name: jenkins
@@ -90,12 +78,6 @@
         enabled: true
         state: started
 
-    # - name: create slave folder
-    #   file:
-    #     path: /home/jenkins
-    #     state: directory
-    # - name: add permission to slave folder
-    #   command: "chmod -R 777 /home/jenkins"
     - name: Get jenkins password
       ansible.builtin.command: cat /var/lib/jenkins/secrets/initialAdminPassword
       register: jenkins_password
@@ -128,20 +110,30 @@
     - debug:
         var: pass_git.stdout_lines
 
-    - name: Download kubectl binary
-      get_url:
-        url: "https://dl.k8s.io/release/v1.23.5/bin/linux/amd64/kubectl"
-        dest: "/tmp"
-      tags:
-        - kubectl
+    # - name: Download kubectl binary
+    #   get_url:
+    #     url: "https://dl.k8s.io/release/v1.23.5/bin/linux/amd64/kubectl"
+    #     dest: "/tmp"
+    #   tags:
+    #     - kubectl
 
-    - name: Copy kubectl binary to destination directory
-      copy:
-        src: "/tmp/{{ item }}"
-        dest: "/usr/local/bin/{{ item }}"
-        mode: "0755"
-        owner: "root"
-        group: "root"
-        remote_src: true
-      with_items:
-        - kubectl
+    # - name: Copy kubectl binary to destination directory
+    #   copy:
+    #     src: "/tmp/{{ item }}"
+    #     dest: "/usr/local/bin/{{ item }}"
+    #     mode: "0755"
+    #     owner: "root"
+    #     group: "root"
+    #     remote_src: true
+    #   with_items:
+    #     - kubectl
+
+    # install helm from script
+    - name: Get the script
+      command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+    - name: chmod the script
+      command: chmod 700 get_helm.sh
+
+    - name: Run the script
+      command: ./get_helm.sh
